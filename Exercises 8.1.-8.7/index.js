@@ -96,7 +96,7 @@ const typeDefs = `
   type Query {
         bookCount: Int!
         authorCount: Int!
-        allBooks(author: String):[Book!]!
+        allBooks(author: String, genre: String):[Book!]!
         allAuthors:[Author!]!
   }
   enum YesNo {
@@ -113,11 +113,22 @@ const resolvers = {
             return authors.length
         },
         allBooks: (root, args) => {
-            if (!args.author) {
+            if (!args) {
                 return books
             }
-            const authorsBooks = books.filter(book => book.author === args.author)
-            return authorsBooks
+            if (args.author && args.genre) {
+                const authorsBooks = books.filter(book => book.author === args.author)
+                const authorsBooksByGenre = authorsBooks.filter(book => book.genres.includes(args.genre))
+                return authorsBooksByGenre
+            }
+            if (args.author) {
+                const authorsBooks = books.filter(book => book.author === args.author)
+                return authorsBooks
+            }
+            if (args.genre) {
+                const authorsBooks = books.filter(book => book.genres.includes(args.genre))
+                return authorsBooks
+            }
 
         },
 
