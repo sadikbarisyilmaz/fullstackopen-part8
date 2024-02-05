@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import { v4 as uuidv4 } from 'uuid';
 
 let authors = [
     {
@@ -83,7 +84,7 @@ const typeDefs = `
   type Book {
         title: String!
         author: String!
-        published: String! 
+        published: Int! 
         genres: [String!]!
         id: ID!
     }
@@ -91,6 +92,7 @@ const typeDefs = `
   type Author {
         name: String!
         bookCount: Int
+        born: Int
     }
 
   type Query {
@@ -99,6 +101,16 @@ const typeDefs = `
         allBooks(author: String, genre: String):[Book!]!
         allAuthors:[Author!]!
   }
+
+  type Mutation {
+    addBook(
+        title: String!,
+        author: String!,
+        published: Int!
+        genres: [String!]!
+    ):Book
+  }
+
   enum YesNo {
     YES
     NO
@@ -135,13 +147,35 @@ const resolvers = {
         allAuthors: () => {
             const allAuthors = authors.map(author => {
                 const authorsBooks = books.filter(book => book.author === author.name)
-                return { name: author.name, bookCount: authorsBooks.length }
+                return { name: author.name, born: author.born, bookCount: authorsBooks.length }
             }
             )
             return allAuthors
         }
     },
-
+    Mutation: {
+        addBook: (root, args) => {
+            const book = { ...args, id: uuidv4() }
+            books = books.concat(book)
+            const doesAuthorExist = authors.map(author => author.name).includes(args.author)
+            if (!doesAuthorExist) {
+                const author = { name: args.author, id: uuidv4() }
+                authors = authors.concat(author)
+            }
+            return { title: book.title, author: book.author }
+            // if (persons.find(p => p.name === args.name)) {
+            //     throw new GraphQLError('Name must be unique', {
+            //         extensions: {
+            //             code: 'BAD_USER_INPUT',
+            //             invalidArgs: args.name
+            //         }
+            //     })
+            // }
+            // const person = { ...args, id: uuidv4() }
+            // persons = persons.concat(person)
+            // return person
+        },
+    }
 }
 
 const server = new ApolloServer({
