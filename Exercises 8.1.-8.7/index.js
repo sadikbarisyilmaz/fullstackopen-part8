@@ -109,6 +109,10 @@ const typeDefs = `
         published: Int!
         genres: [String!]!
     ):Book
+    editAuthor(
+        name: String!
+        setBornTo: Int!
+      ): Author
   }
 
   enum YesNo {
@@ -163,17 +167,23 @@ const resolvers = {
                 authors = authors.concat(author)
             }
             return { title: book.title, author: book.author }
-            // if (persons.find(p => p.name === args.name)) {
-            //     throw new GraphQLError('Name must be unique', {
-            //         extensions: {
-            //             code: 'BAD_USER_INPUT',
-            //             invalidArgs: args.name
-            //         }
-            //     })
-            // }
-            // const person = { ...args, id: uuidv4() }
-            // persons = persons.concat(person)
-            // return person
+        },
+        editAuthor: (root, args) => {
+            const doesAuthorExist = authors.map(author => author.name).includes(args.name)
+            if (doesAuthorExist) {
+
+                authors = authors.map(author => {
+                    if (author.name === args.name) {
+                        return { ...args, born: args.setBornTo }
+                    }
+                    return author
+                })
+
+                return { name: args.name, born: args.setBornTo }
+            } else {
+                return null
+            }
+
         },
     }
 }
