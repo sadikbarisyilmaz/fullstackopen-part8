@@ -165,7 +165,7 @@ const resolvers = {
                 const author = { name: args.author, id: uuidv4() }
                 authors = authors.concat(author)
             }
-            return { title: book.title, author: book.author }
+            return { title: book.title, author: book.author, published: book.published, genres: book.genres }
         },
         editAuthor: (root, args) => {
             const doesAuthorExist = authors.map(author => author.name).includes(args.name)
