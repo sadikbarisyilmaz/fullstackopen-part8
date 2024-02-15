@@ -93,6 +93,7 @@ const typeDefs = `
         name: String!
         bookCount: Int
         born: Int
+        id:ID!
     }
 
   type Query {
@@ -129,9 +130,6 @@ const resolvers = {
             return authors.length
         },
         allBooks: (root, args) => {
-            if (!args) {
-                return books
-            }
             if (args.author && args.genre) {
                 const authorsBooks = books.filter(book => book.author === args.author)
                 const authorsBooksByGenre = authorsBooks.filter(book => book.genres.includes(args.genre))
@@ -145,7 +143,7 @@ const resolvers = {
                 const authorsBooks = books.filter(book => book.genres.includes(args.genre))
                 return authorsBooks
             }
-
+            return books
         },
 
         allAuthors: () => {
@@ -157,6 +155,7 @@ const resolvers = {
             return allAuthors
         }
     },
+
     Mutation: {
         addBook: (root, args) => {
             const book = { ...args, id: uuidv4() }
