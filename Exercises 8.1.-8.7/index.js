@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import { GraphQLError } from 'graphql';
 import { v4 as uuidv4 } from 'uuid';
 
 let authors = [
@@ -160,13 +161,27 @@ const resolvers = {
         addBook: (root, args) => {
             const book = { ...args, id: uuidv4() }
             books = books.concat(book)
+
             const doesAuthorExist = authors.map(author => author.name).includes(args.author)
+            const doesTitleExist = books.some(book => book.title === args.title)
+
+            if (doesTitleExist) {
+                throw new GraphQLError('Title must be unique', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.title
+                    }
+                })
+            }
+
             if (!doesAuthorExist) {
                 const author = { name: args.author, id: uuidv4() }
                 authors = authors.concat(author)
             }
+
             return { title: book.title, author: book.author, published: book.published, genres: book.genres }
         },
+
         editAuthor: (root, args) => {
             const doesAuthorExist = authors.map(author => author.name).includes(args.name)
             if (doesAuthorExist) {

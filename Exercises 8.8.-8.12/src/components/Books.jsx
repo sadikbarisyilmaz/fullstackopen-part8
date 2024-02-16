@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "@apollo/client";
-import { all_books, new_book } from "../queries";
+import { all_authors, all_books, new_book } from "../queries";
 import { useState } from "react";
 
 export const Books = () => {
@@ -9,11 +9,12 @@ export const Books = () => {
     published: "",
     genres: [],
   });
+
   const [genre, setGenre] = useState("");
 
   const result = useQuery(all_books);
   const [createPerson] = useMutation(new_book, {
-    refetchQueries: [{ query: all_books }],
+    refetchQueries: [{ query: all_books, query: all_authors }],
   });
 
   if (result.loading) {
@@ -24,7 +25,7 @@ export const Books = () => {
     let { title, author, published, genres } = formdata;
     published = Number(published);
     createPerson({ variables: { title, author, published, genres } });
-    console.log(formdata);
+
     setGenre("");
     setFormdata({
       title: "",
@@ -65,7 +66,7 @@ export const Books = () => {
         </div>
         <div className="flex flex-col gap-4">
           <h2 className="text-xl font-bold">Add New Book</h2>
-          <div className="p-4 border border-black grid gap-2">
+          <div className="p-4 border border-black ">
             <form className="flex flex-col gap-2">
               <span className="flex">
                 <label className="min-w-[80px]" htmlFor="title">
