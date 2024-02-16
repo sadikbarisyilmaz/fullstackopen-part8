@@ -160,12 +160,13 @@ const resolvers = {
     Mutation: {
         addBook: (root, args) => {
             const book = { ...args, id: uuidv4() }
-            books = books.concat(book)
 
             const doesAuthorExist = authors.map(author => author.name).includes(args.author)
             const doesTitleExist = books.some(book => book.title === args.title)
 
-            if (doesTitleExist) {
+            if (!doesTitleExist) {
+                books = books.concat(book)
+            } else {
                 throw new GraphQLError('Title must be unique', {
                     extensions: {
                         code: 'BAD_USER_INPUT',

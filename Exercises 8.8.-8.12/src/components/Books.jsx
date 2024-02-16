@@ -13,8 +13,8 @@ export const Books = () => {
   const [genre, setGenre] = useState("");
 
   const result = useQuery(all_books);
-  const [createPerson] = useMutation(new_book, {
-    refetchQueries: [{ query: all_books, query: all_authors }],
+  const [createBook] = useMutation(new_book, {
+    refetchQueries: [{ query: all_books }, { query: all_authors }],
   });
 
   if (result.loading) {
@@ -24,7 +24,7 @@ export const Books = () => {
   const handleSubmit = () => {
     let { title, author, published, genres } = formdata;
     published = Number(published);
-    createPerson({ variables: { title, author, published, genres } });
+    createBook({ variables: { title, author, published, genres } });
 
     setGenre("");
     setFormdata({
@@ -146,7 +146,7 @@ export const Books = () => {
             </div>
             <button
               onClick={handleSubmit}
-              className=" mt-2 middle none center rounded-sm bg-amber-500 py-1 px-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+              className="w-full mt-2 middle none center rounded-sm bg-amber-500 py-1 px-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             >
               Submit
             </button>
