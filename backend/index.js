@@ -4,6 +4,7 @@ import { connect, set } from 'mongoose'
 import "dotenv/config";
 import { Author } from './models/author.js';
 import { Book } from './models/book.js';
+import { GraphQLError } from 'graphql';
 
 const MONGODB_URI = process.env.MONGODB_URI
 set('strictQuery', false)
@@ -177,7 +178,7 @@ const resolvers = {
             try {
                 await book.save()
             } catch (error) {
-                throw new GraphQLError('Saving book failed', {
+                throw new GraphQLError(error.message, {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: args.name,
@@ -194,7 +195,7 @@ const resolvers = {
             try {
                 await author.save()
             } catch (error) {
-                throw new GraphQLError('Saving book failed', {
+                throw new GraphQLError(error.message, {
                     extensions: {
                         code: 'BAD_USER_INPUT',
                         invalidArgs: args.name,
