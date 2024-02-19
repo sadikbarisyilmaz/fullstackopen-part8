@@ -146,36 +146,27 @@ const resolvers = {
         bookCount: async () => Book.collection.countDocuments(),
         authorCount: async () => Author.collection.countDocuments(),
         allBooks: async (root, args) => {
-            // if (args.author && args.genre) {
-            //     const authorsBooks = books.filter(book => book.author === args.author)
-            //     const authorsBooksByGenre = authorsBooks.filter(book => book.genres.includes(args.genre))
-            //     return authorsBooksByGenre
-            // }
-            // if (args.author) {
-            //     const authorsBooks = books.filter(book => book.author === args.author)
-            //     return authorsBooks
-            // }
-            // if (args.genre) {
-            //     const authorsBooks = books.filter(book => book.genres.includes(args.genre))
-            //     return authorsBooks
-            // }
-            // return books
+            if (args.author && args.genre) {
+                return Book.find({
+                    genres: args.genre, author: args.author,
+                }).
+                    populate('author')
+            }
+            if (args.genre) {
+                return Book.find({ genres: args.genre }).
+                    populate('author')
+            }
+            if (args.author) {
+                return Book.find({ author: args.author }).
+                    populate('author')
+            }
 
-            // if (args.author) {
-            //     return Book.find({ author: args.author })
-            // }
             return Book.find({}).
                 populate('author')
+
         },
 
         allAuthors: async (root, args) => {
-            // const allAuthors = authors.map(author => {
-            //     const authorsBooks = books.filter(book => book.author === author.name)
-            //     return { name: author.name, born: author.born, bookCount: authorsBooks.length }
-            // }
-            // )
-            // return allAuthors
-
             return Author.find({})
         }
     },
@@ -183,47 +174,35 @@ const resolvers = {
     Mutation: {
         addBook: async (root, args) => {
             const book = new Book({ ...args })
-
-            // const doesAuthorExist = authors.map(author => author.name).includes(args.author)
-            // const doesTitleExist = books.some(book => book.title === args.title)
-
-            // if (!doesTitleExist) {
-            //     books = books.concat(book)
-            // } else {
-            //     throw new GraphQLError('Title must be unique', {
-            //         extensions: {
-            //             code: 'BAD_USER_INPUT',
-            //             invalidArgs: args.title
-            //         }
-            //     })
-            // }
-
-            // if (!doesAuthorExist) {
-            //     const author = { name: args.author, id: uuidv4() }
-            //     authors = authors.concat(author)
-            // }
-
-            return book.save()
+            try {
+                await book.save()
+            } catch (error) {
+                throw new GraphQLError('Saving book failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.name,
+                        error
+                    }
+                })
+            }
+            return book
         },
 
         editAuthor: async (root, args) => {
-            // const doesAuthorExist = authors.map(author => author.name).includes(args.name)
-            // if (doesAuthorExist) {
-
-            //     authors = authors.map(author => {
-            //         if (author.name === args.name) {
-            //             return { ...args, born: args.setBornTo }
-            //         }
-            //         return author
-            //     })
-
-            //     return { name: args.name, born: args.setBornTo }
-            // } else {
-            //     return null
-            // }
             const author = await Author.findOne({ name: args.name })
             author.born = args.setBornTo
-            return author.save()
+            try {
+                await author.save()
+            } catch (error) {
+                throw new GraphQLError('Saving book failed', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.name,
+                        error
+                    }
+                })
+            }
+            return author
         },
     }
 }
