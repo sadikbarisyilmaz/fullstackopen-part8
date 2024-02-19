@@ -1,17 +1,17 @@
 import { useQuery, useMutation } from "@apollo/client";
 import { all_authors, all_books, new_book } from "../queries";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Select from "react-select";
 
 export const Books = () => {
   const [formdata, setFormdata] = useState({
     title: "",
-    author: "",
     published: "",
     genres: [],
   });
-
+  const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [genre, setGenre] = useState("");
-
+  const select = useRef();
   const result = useQuery(all_books);
   const [createBook] = useMutation(new_book, {
     refetchQueries: [{ query: all_books }, { query: all_authors }],
@@ -21,15 +21,35 @@ export const Books = () => {
     return <div>loading...</div>;
   }
 
+  const uniqueAuthors = (booksArr) => {
+    const arr = [];
+    const authorsExtractedArr = booksArr.map((book) => {
+      return { value: book.author.id, label: book.author.name };
+    });
+
+    authorsExtractedArr.forEach((book) => {
+      arr.some((author) => author.value === book.value) ? "" : arr.push(book);
+    });
+    return arr;
+  };
+
+  const selectOptions = uniqueAuthors(result.data.allBooks);
+
+  const handleChange = (selectOptions) => {
+    setSelectedAuthor(selectOptions);
+  };
+
   const handleSubmit = () => {
-    let { title, author, published, genres } = formdata;
+    let { title, published, genres } = formdata;
     published = Number(published);
+    const author = selectedAuthor.value;
+    console.log({ title, author, published, genres });
     createBook({ variables: { title, author, published, genres } });
 
+    select.current.clearValue();
     setGenre("");
     setFormdata({
       title: "",
-      author: "",
       published: "",
       genres: [],
     });
@@ -53,7 +73,7 @@ export const Books = () => {
                 key={i}
               >
                 <span className="flex">{book.title}</span>
-                <span className="flex">{book.author}</span>
+                <span className="flex">{book.author.name}</span>
                 <span className="flex">{book.published}</span>
                 <span className="flex flex-col gap-1 ">
                   {book.genres.map((genre, i) => {
@@ -82,7 +102,19 @@ export const Books = () => {
                   }
                 />
               </span>
+
               <span className="flex">
+                <label className="min-w-[80px]" htmlFor="author">
+                  Author
+                </label>
+                <Select
+                  ref={select}
+                  className="w-full"
+                  onChange={handleChange}
+                  options={selectOptions}
+                />
+              </span>
+              {/* <span className="flex">
                 <label className="min-w-[80px]" htmlFor="author">
                   Author:
                 </label>
@@ -95,7 +127,7 @@ export const Books = () => {
                     setFormdata({ ...formdata, author: e.target.value })
                   }
                 />
-              </span>
+              </span> */}
               <span className="flex">
                 <label className="min-w-[80px]" htmlFor="published">
                   Published:

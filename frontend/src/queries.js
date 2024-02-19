@@ -10,11 +10,15 @@ export const all_authors = gql`
   }
 `;
 
+
 export const all_books = gql`
   query {
     allBooks {
       title
-      author
+      author {
+        name
+        id
+      }
       published
       genres
     }

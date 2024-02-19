@@ -1,8 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
-import { GraphQLError } from 'graphql';
 import { connect, set } from 'mongoose'
-import { v4 as uuidv4 } from 'uuid';
 import "dotenv/config";
 import { Author } from './models/author.js';
 import { Book } from './models/book.js';
@@ -96,6 +94,14 @@ connect(MONGODB_URI)
 const typeDefs = `
   type Book {
         title: String!
+        author: Author!
+        published: Int! 
+        genres: [String!]!
+        id: ID!
+    }
+
+  type NewBook {
+        title: String!
         author: String!
         published: Int! 
         genres: [String!]!
@@ -112,7 +118,7 @@ const typeDefs = `
   type Query {
         bookCount: Int!
         authorCount: Int!
-        allBooks(author: String, genre: String):[Book!]!
+        allBooks(author: ID, genre: String):[Book!]!
         allAuthors:[Author!]!
   }
 
@@ -122,7 +128,7 @@ const typeDefs = `
         author: String!,
         published: Int!
         genres: [String!]!
-    ):Book
+    ):NewBook
     editAuthor(
         name: String!
         setBornTo: Int!
@@ -155,10 +161,14 @@ const resolvers = {
             // }
             // return books
 
-            return Book.find({})
+            // if (args.author) {
+            //     return Book.find({ author: args.author })
+            // }
+            return Book.find({}).
+                populate('author')
         },
 
-        allAuthors: async () => {
+        allAuthors: async (root, args) => {
             // const allAuthors = authors.map(author => {
             //     const authorsBooks = books.filter(book => book.author === author.name)
             //     return { name: author.name, born: author.born, bookCount: authorsBooks.length }

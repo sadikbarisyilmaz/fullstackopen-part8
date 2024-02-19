@@ -1,6 +1,4 @@
 import { Schema, model } from 'mongoose'
-
-// you must install this library
 import uniqueValidator from 'mongoose-unique-validator'
 
 const schema = new Schema({
@@ -14,10 +12,8 @@ const schema = new Schema({
         type: Number,
     },
     author: {
-        // type: Schema.Types.ObjectId,
-        // ref: 'Author'
-        type: String,
-
+        type: Schema.Types.ObjectId,
+        ref: 'Author'
     },
     genres: [
         { type: String }
