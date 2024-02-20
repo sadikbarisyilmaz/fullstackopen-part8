@@ -7,7 +7,6 @@ import { Book } from './models/book.js';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken'
 import { User } from './models/user.js';
-import { Token } from './models/token.js';
 
 const MONGODB_URI = process.env.MONGODB_URI
 set('strictQuery', false)
@@ -19,81 +18,6 @@ connect(MONGODB_URI)
     .catch((error) => {
         console.log('error connection to MongoDB:', error.message)
     })
-
-
-
-// let authors = [
-//     {
-//         name: 'Robert Martin',
-//         born: 1952,
-//     },
-//     {
-//         name: 'Martin Fowler',
-//         born: 1963
-//     },
-//     {
-//         name: 'Fyodor Dostoevsky',
-//         born: 1821
-//     },
-//     {
-//         name: 'Joshua Kerievsky',
-//     },
-//     {
-//         name: 'Sandi Metz',
-//     },
-// ]
-
-// let books = [
-//     {
-//         title: 'Clean Code',
-//         published: 2008,
-//         author: 'Robert Martin',
-//         id: "afa5b6f4-344d-11e9-a414-719c6709cf3e",
-//         genres: ['refactoring']
-//     },
-//     {
-//         title: 'Agile software development',
-//         published: 2002,
-//         author: 'Robert Martin',
-//         id: "afa5b6f5-344d-11e9-a414-719c6709cf3e",
-//         genres: ['agile', 'patterns', 'design']
-//     },
-//     {
-//         title: 'Refactoring, edition 2',
-//         published: 2018,
-//         author: 'Martin Fowler',
-//         id: "afa5de00-344d-11e9-a414-719c6709cf3e",
-//         genres: ['refactoring']
-//     },
-//     {
-//         title: 'Refactoring to patterns',
-//         published: 2008,
-//         author: 'Joshua Kerievsky',
-//         id: "afa5de01-344d-11e9-a414-719c6709cf3e",
-//         genres: ['refactoring', 'patterns']
-//     },
-//     {
-//         title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
-//         published: 2012,
-//         author: 'Sandi Metz',
-//         id: "afa5de02-344d-11e9-a414-719c6709cf3e",
-//         genres: ['refactoring', 'design']
-//     },
-//     {
-//         title: 'Crime and punishment',
-//         published: 1866,
-//         author: 'Fyodor Dostoevsky',
-//         id: "afa5de03-344d-11e9-a414-719c6709cf3e",
-//         genres: ['classic', 'crime']
-//     },
-//     {
-//         title: 'The Demon ',
-//         published: 1872,
-//         author: 'Fyodor Dostoevsky',
-//         id: "afa5de04-344d-11e9-a414-719c6709cf3e",
-//         genres: ['classic', 'revolution']
-//     },
-// ]
 
 const typeDefs = `
   type Book {
@@ -118,22 +42,26 @@ const typeDefs = `
         born: Int
         id:ID!
     }
+  type Genre {
+       value:String!
+    }
 
-    type User {
-            username: String!
-            favoriteGenre: String!
-            id: ID!
-        }
+  type User {
+        username: String!
+        favoriteGenre: String!
+        id: ID!
+    }
         
-    type Token {
-            value: String!
-        }
+  type Token {
+        value: String!
+    }
 
   type Query {
         bookCount: Int!
         authorCount: Int!
         allBooks(author: ID, genre: String):[Book!]!
         allAuthors:[Author!]!
+        allGenres:[String!]!
         me: User
   }
 
@@ -184,7 +112,22 @@ const resolvers = {
                 populate('author')
 
         },
+        allGenres: async (root, args) => {
+            const books = await Book.find({})
+            const extractGenres = (booksArr) => {
+                const genres = [];
+                booksArr.forEach((book) => {
+                    book.genres.forEach((booksGenre) => {
+                        genres.some((genre) => genre === booksGenre)
+                            ? ""
+                            : genres.push(booksGenre);
+                    });
+                });
+                return genres;
+            };
 
+            return extractGenres(books)
+        },
         allAuthors: async (root, args) => {
             return Author.find({})
         },

@@ -1,7 +1,7 @@
-import { useQuery, useMutation } from "@apollo/client";
-import { all_authors, all_books, new_book } from "../queries";
-import { useRef, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { all_books, new_book, all_genres } from "../queries";
 import Select from "react-select";
+import { useState, useRef } from "react";
 
 export const Books = () => {
   const [formdata, setFormdata] = useState({
@@ -9,17 +9,17 @@ export const Books = () => {
     published: "",
     genres: [],
   });
+
   const [selectedAuthor, setSelectedAuthor] = useState(null);
+  const [newGenre, setNewGenre] = useState("");
   const [genre, setGenre] = useState("");
   const select = useRef();
-  const result = useQuery(all_books);
-  const [createBook] = useMutation(new_book, {
-    refetchQueries: [{ query: all_books }, { query: all_authors }],
-  });
+  const result = useQuery(all_books, { variables: { genre } });
+  const genresResult = useQuery(all_genres);
 
-  if (result.loading) {
-    return <div>loading...</div>;
-  }
+  const [createBook] = useMutation(new_book, {
+    refetchQueries: [{ query: all_books, variables: { genre } }],
+  });
 
   const uniqueAuthors = (booksArr) => {
     const arr = [];
@@ -33,8 +33,11 @@ export const Books = () => {
     return arr;
   };
 
-  const selectOptions = uniqueAuthors(result.data.allBooks);
+  if (result.loading) {
+    return <div>loading...</div>;
+  }
 
+  const selectOptions = uniqueAuthors(result.data.allBooks);
   const handleChange = (selectOptions) => {
     setSelectedAuthor(selectOptions);
   };
@@ -43,11 +46,11 @@ export const Books = () => {
     let { title, published, genres } = formdata;
     published = Number(published);
     const author = selectedAuthor.value;
-    console.log({ title, author, published, genres });
+    // console.log({ title, author, published, genres });
     createBook({ variables: { title, author, published, genres } });
-
+    // setIsUpdated(true);
     select.current.clearValue();
-    setGenre("");
+    setNewGenre("");
     setFormdata({
       title: "",
       published: "",
@@ -55,6 +58,19 @@ export const Books = () => {
     });
   };
 
+  const extractGenres = (booksArr) => {
+    const genres = [];
+    booksArr.forEach((book) => {
+      book.genres.forEach((booksGenre) => {
+        genres.some((genre) => genre === booksGenre)
+          ? ""
+          : genres.push(booksGenre);
+      });
+    });
+    return genres;
+  };
+
+  const genres = extractGenres(result.data.allBooks);
   return (
     <div className="text-left flex flex-col gap-4">
       <h1 className="text-2xl font-bold">Books</h1>
@@ -114,20 +130,6 @@ export const Books = () => {
                   options={selectOptions}
                 />
               </span>
-              {/* <span className="flex">
-                <label className="min-w-[80px]" htmlFor="author">
-                  Author:
-                </label>
-                <input
-                  className="border border-black px-1"
-                  type="text"
-                  name="author"
-                  value={formdata.author}
-                  onChange={(e) =>
-                    setFormdata({ ...formdata, author: e.target.value })
-                  }
-                />
-              </span> */}
               <span className="flex">
                 <label className="min-w-[80px]" htmlFor="published">
                   Published:
@@ -160,15 +162,15 @@ export const Books = () => {
               <input
                 className="border border-black px-1"
                 type="text"
-                name="genre"
-                value={genre}
-                onChange={(e) => setGenre(e.target.value)}
+                name="newGenre"
+                value={newGenre}
+                onChange={(e) => setNewGenre(e.target.value)}
               />
               <button
                 onClick={() =>
                   setFormdata({
                     ...formdata,
-                    genres: [...formdata.genres, genre],
+                    genres: [...formdata.genres, newGenre],
                   })
                 }
                 className="ml-2 middle none center rounded-sm bg-amber-500 py-1 px-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -182,6 +184,29 @@ export const Books = () => {
             >
               Submit
             </button>
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">Genre Filters</h2>
+            <div className="mt-2 flex flex-wrap gap-1">
+              <button
+                className="middle none center rounded-sm bg-amber-900 py-1 px-2 font-sans text-xs font-bold  text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                onClick={() => setGenre("")}
+              >
+                See All
+              </button>
+              {genresResult &&
+                genresResult.data.allGenres.map((genre, i) => {
+                  return (
+                    <button
+                      className="middle none center rounded-sm bg-amber-500 py-1 px-2 font-sans text-xs font-bold  text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                      key={i}
+                      onClick={() => setGenre(genre)}
+                    >
+                      {genre}
+                    </button>
+                  );
+                })}
+            </div>
           </div>
         </div>
       </div>
