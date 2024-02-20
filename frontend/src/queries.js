@@ -11,20 +11,6 @@ export const all_authors = gql`
 `;
 
 
-// export const all_books = gql`
-//   query {
-//     allBooks {
-//       title
-//       author {
-//         name
-//         id
-//       }
-//       published
-//       genres
-//     }
-//   }
-// `;
-
 export const me = gql`
   query {
     me {
@@ -40,18 +26,26 @@ export const all_genres = gql`
   }
 `;
 
+
+const BOOK_DETAILS = gql`
+  fragment BookDetails on Book {
+    title
+    author{
+      name
+      id
+    }
+    published
+    genres
+  }
+`
+
 export const all_books = gql`
 query AllBooks($genre: String) {
   allBooks(genre: $genre) {
-    title
-      author {
-        name
-        id
-      }
-      published
-      genres
+   ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `;
 
 export const new_book = gql`
@@ -67,12 +61,10 @@ export const new_book = gql`
       published: $published
       genres: $genres
     ) {
-      title
-      author
-      published
-      genres
+      ...BookDetails
     }
   }
+${BOOK_DETAILS}
 `;
 
 

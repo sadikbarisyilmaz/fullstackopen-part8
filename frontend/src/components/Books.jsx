@@ -109,7 +109,7 @@ export const Books = () => {
                   Title:
                 </label>
                 <input
-                  className="border border-black px-1"
+                  className="border border-black px-1 w-full"
                   type="text"
                   name="title"
                   value={formdata.title}
@@ -135,7 +135,7 @@ export const Books = () => {
                   Published:
                 </label>
                 <input
-                  className="border border-black px-1"
+                  className="border border-black px-1 w-full"
                   type="text"
                   name="published"
                   value={formdata.published}

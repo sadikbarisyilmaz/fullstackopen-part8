@@ -15,7 +15,7 @@ export const Authors = () => {
   if (result.loading) {
     return <div>loading...</div>;
   }
-
+  console.log(result);
   const selectOptions = result.data.allAuthors.map((author) => {
     return { value: author.name, label: author.name };
   });
@@ -42,17 +42,17 @@ export const Authors = () => {
       <h1 className="text-2xl font-bold">Authors</h1>
       <div className="flex gap-6">
         <div className=" p-4 border border-black">
-          <div className="grid grid-cols-3 gap-2 font-semibold border-b-2 border-black py-2">
+          <div className="grid grid-cols-2 gap-2 font-semibold border-b-2 border-black py-2">
             <span>Name</span>
             <span>BornYear</span>
-            <span>Book Count</span>
+            {/* <span>Book Count</span> */}
           </div>
           {result.data.allAuthors.map((author, i) => {
             return (
-              <div className="grid grid-cols-3 gap-2  border-b py-2" key={i}>
+              <div className="grid grid-cols-2 gap-2  border-b py-2" key={i}>
                 <span>{author.name}</span>
                 <span>{author.born}</span>
-                <span>{author.bookCount}</span>
+                {/* <span>{author.bookCount}</span> */}
               </div>
             );
           })}
