@@ -46,7 +46,7 @@ export const Books = () => {
     let { title, published, genres } = formdata;
     published = Number(published);
     const author = selectedAuthor.value;
-    // console.log({ title, author, published, genres });
+    console.log({ title, author, published, genres });
     createBook({ variables: { title, author, published, genres } });
     // setIsUpdated(true);
     select.current.clearValue();

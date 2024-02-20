@@ -15,7 +15,7 @@ export const Authors = () => {
   if (result.loading) {
     return <div>loading...</div>;
   }
-  console.log(result);
+
   const selectOptions = result.data.allAuthors.map((author) => {
     return { value: author.name, label: author.name };
   });
@@ -28,10 +28,7 @@ export const Authors = () => {
     e.preventDefault();
     const name = selectedAuthor.value;
     const setBornTo = Number(bornYear);
-    console.log(name, bornYear);
-
     updateAuthor({ variables: { name, setBornTo } });
-
     setSelectedAuthor(null);
     select.current.clearValue();
     setBornYear("");
@@ -44,14 +41,14 @@ export const Authors = () => {
         <div className=" p-4 border border-black">
           <div className="grid grid-cols-2 gap-2 font-semibold border-b-2 border-black py-2">
             <span>Name</span>
-            <span>BornYear</span>
+            <span className=" text-center">Birth Year</span>
             {/* <span>Book Count</span> */}
           </div>
           {result.data.allAuthors.map((author, i) => {
             return (
-              <div className="grid grid-cols-2 gap-2  border-b py-2" key={i}>
+              <div className="grid   grid-cols-2 gap-2  border-b py-2" key={i}>
                 <span>{author.name}</span>
-                <span>{author.born}</span>
+                <span className=" text-center">{author.born}</span>
                 {/* <span>{author.bookCount}</span> */}
               </div>
             );
