@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { all_books, new_book, all_genres } from "../queries";
+import { ALL_BOOKS, ADD_BOOK, ALL_GENRES } from "../queries";
 import Select from "react-select";
 import { useState, useRef } from "react";
 
@@ -14,11 +14,11 @@ export const Books = () => {
   const [newGenre, setNewGenre] = useState("");
   const [genre, setGenre] = useState("");
   const select = useRef();
-  const result = useQuery(all_books, { variables: { genre } });
-  const genresResult = useQuery(all_genres);
+  const result = useQuery(ALL_BOOKS, { variables: { genre } });
+  const genresResult = useQuery(ALL_GENRES);
 
-  const [createBook] = useMutation(new_book, {
-    refetchQueries: [{ query: all_books, variables: { genre } }],
+  const [createBook] = useMutation(ADD_BOOK, {
+    refetchQueries: [{ query: ALL_BOOKS, variables: { genre } }],
   });
 
   const uniqueAuthors = (booksArr) => {
@@ -46,7 +46,6 @@ export const Books = () => {
     let { title, published, genres } = formdata;
     published = Number(published);
     const author = selectedAuthor.value;
-    console.log({ title, author, published, genres });
     createBook({ variables: { title, author, published, genres } });
     // setIsUpdated(true);
     select.current.clearValue();
@@ -69,7 +68,6 @@ export const Books = () => {
     });
     return genres;
   };
-
   const genres = extractGenres(result.data.allBooks);
   return (
     <div className="text-left flex flex-col gap-4">

@@ -5,14 +5,27 @@ import { Books } from "./components/Books";
 import { Link } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 import { LoginForm } from "./components/LoginForm";
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient, useQuery, useSubscription } from "@apollo/client";
 import { Recommended } from "./components/Recommended";
-import { me } from "./queries";
+import { BOOK_ADDED, ALL_BOOKS, ME } from "./queries";
 
 function App() {
   const [token, setToken] = useState(null);
-  const result = useQuery(me);
+  const result = useQuery(ME);
   const client = useApolloClient();
+
+  const refetch = async (query) => {
+    await client.refetchQueries({
+      include: [query],
+    });
+  };
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data, client }) => {
+      refetch(ALL_BOOKS);
+      // notify(`${addedBook.title} added`)
+    },
+  });
 
   const logout = () => {
     setToken(null);

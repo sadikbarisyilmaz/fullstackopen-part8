@@ -57,6 +57,7 @@ export const resolvers = {
 
     Mutation: {
         addBook: async (root, args, context) => {
+            console.log(args, context);
             const currentUser = context.currentUser
             if (!currentUser) {
                 throw new GraphQLError('not authenticated', {
@@ -83,6 +84,8 @@ export const resolvers = {
         },
 
         editAuthor: async (root, args, context) => {
+            console.log(args, context);
+
             const currentUser = context.currentUser
             if (!currentUser) {
                 throw new GraphQLError('not authenticated', {

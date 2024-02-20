@@ -1,8 +1,8 @@
 import { useQuery } from "@apollo/client";
-import { all_books } from "../queries";
+import { ALL_BOOKS } from "../queries";
 
 export const Recommended = ({ genre }) => {
-  const result = useQuery(all_books, { variables: { genre } });
+  const result = useQuery(ALL_BOOKS, { variables: { genre } });
 
   if (result.loading) {
     return <div>loading...</div>;
