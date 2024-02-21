@@ -48,7 +48,16 @@ export const resolvers = {
             return extractGenres(books)
         },
         allAuthors: async (root, args) => {
-            return Author.find({})
+            const allAuthors = await Author.find({}).exec()
+            const withBookCount = await Promise.all(allAuthors.map(async (author) => {
+                const books = await Book.find({
+                    author: {
+                        $in: [author.id]
+                    }
+                }).exec()
+                return { ...author.toObject(), bookCount: books.length }
+            }))
+            return withBookCount
         },
         me: (root, args, context) => {
             return context.currentUser

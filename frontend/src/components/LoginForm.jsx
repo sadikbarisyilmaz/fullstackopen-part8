@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
-import { useMutation } from "@apollo/client";
+import { split, useMutation } from "@apollo/client";
 import { LOGIN } from "../queries";
+import { useApolloContext } from "../apolloContext";
+import { getMainDefinition } from "@apollo/client/utilities";
 
 export const LoginForm = ({ setError, setToken }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const { setContextSplitLink, authLink, httpLink, wsLink } =
+    useApolloContext();
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -22,7 +27,20 @@ export const LoginForm = ({ setError, setToken }) => {
 
   const submit = async (event) => {
     event.preventDefault();
-
+    //Fixes login problem
+    setContextSplitLink(
+      split(
+        ({ query }) => {
+          const definition = getMainDefinition(query);
+          return (
+            definition.kind === "OperationDefinition" &&
+            definition.operation === "subscription"
+          );
+        },
+        wsLink,
+        authLink.concat(httpLink)
+      )
+    );
     login({ variables: { username, password } });
   };
 

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { ALL_BOOKS, ADD_BOOK, ALL_GENRES } from "../queries";
+import { ALL_BOOKS, ADD_BOOK, ALL_GENRES, ALL_AUTHORS } from "../queries";
 import Select from "react-select";
 import { useState, useRef } from "react";
 
@@ -18,7 +18,10 @@ export const Books = () => {
   const genresResult = useQuery(ALL_GENRES);
 
   const [createBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS, variables: { genre } }],
+    refetchQueries: [
+      { query: ALL_BOOKS, variables: { genre } },
+      { query: ALL_AUTHORS },
+    ],
   });
 
   const uniqueAuthors = (booksArr) => {

@@ -45,6 +45,11 @@ function App() {
       </div>
     );
   }
+
+  if (!result.data.me) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="h-full flex flex-col gap-4">
       <nav className="py-2">
@@ -85,7 +90,7 @@ function App() {
       <Routes>
         <Route path="/authors" element={<Authors />} />
         <Route path="/" element={<Books />} />
-        {result.data.me.favoriteGenre && (
+        {result && (
           <Route
             path="/recommended"
             element={<Recommended genre={result.data.me.favoriteGenre} />}
