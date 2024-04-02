@@ -8,9 +8,9 @@ import http from "http"
 import { connect, set } from 'mongoose'
 import "dotenv/config";
 import jwt from 'jsonwebtoken'
-import { User } from './models/user.js';
-import { typeDefs } from './schema.js'
-import { resolvers } from './resolvers.js'
+import { User } from '../models/user.js';
+import { typeDefs } from '../schema.js'
+import { resolvers } from '../resolvers.js'
 import { WebSocketServer } from 'ws'
 import { useServer } from 'graphql-ws/lib/use/ws'
 
