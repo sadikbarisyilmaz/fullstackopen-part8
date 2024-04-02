@@ -46,7 +46,7 @@ function App() {
     );
   }
 
-  if (!result.data.me) {
+  if (!result.data) {
     return <div>Loading...</div>;
   }
 
