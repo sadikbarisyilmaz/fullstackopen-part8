@@ -44,11 +44,11 @@ export const ApolloContextProvider = ({ children }) => {
   });
 
   const httpLink = createHttpLink({
-    uri: "http://localhost:4000",
+    uri: "http://localhost:4000/",
   });
 
   const wsLink = new GraphQLWsLink(
-    createClient({ url: "ws://localhost:4000" })
+    createClient({ url: "ws://localhost:4000/" })
   );
 
   //   const splitLink = split(
