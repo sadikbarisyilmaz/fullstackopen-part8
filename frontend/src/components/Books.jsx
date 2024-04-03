@@ -8,14 +8,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 export const Books = () => {
   const [formdata, setFormdata] = useState({
     title: "",
@@ -91,7 +84,7 @@ export const Books = () => {
   const genres = extractGenres(result.data.allBooks);
   return (
     <div className="flex flex-col gap-4 px-6">
-      <Card className="text-left flex flex-col  px-6">
+      <Card className="text-left flex flex-col pt-6 px-6">
         <div className="flex justify-between">
           <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
             Books
@@ -243,7 +236,7 @@ export const Books = () => {
                       })}
                     </span>
                   </div>
-                  <Separator className="bg-black" />
+                  <Separator className="" />
                 </>
               );
             })}

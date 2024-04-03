@@ -2,6 +2,10 @@ import { useQuery, useMutation } from "@apollo/client";
 import { ALL_AUTHORS, UPDATE_AUTHOR } from "../queries";
 import { useRef, useState } from "react";
 import Select from "react-select";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 export const Authors = () => {
   const [selectedAuthor, setSelectedAuthor] = useState(null);
@@ -35,62 +39,78 @@ export const Authors = () => {
   };
 
   return (
-    <div className="text-left flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Authors</h1>
-      <div className="flex gap-6">
-        <div className=" p-4 border border-black">
-          <div className="grid grid-cols-3 gap-2 font-semibold border-b-2 border-black py-2">
-            <span>Name</span>
-            <span className=" text-center">Birth Year</span>
-            <span className=" text-center">Book Count</span>
+    <div className="grid grid-cols-2 gap-4 px-6">
+      <Card className="text-left flex flex-col">
+        <CardHeader className="text-2xl font-bold">Authors</CardHeader>
+        <CardContent className="flex gap-6">
+          <div className=" p-4 ">
+            <div className="grid grid-cols-3 gap-2 font-semibold border-b-2 border-black py-2">
+              <span className=" px-4 py-2 text-left font-bold [&[align=center]]:text-center [&[align=right]]:text-right">
+                Name
+              </span>
+              <span className=" px-4 py-2  font-bold [&[align=center]]:text-center [&[align=right]]:text-right text-center">
+                Birth Year
+              </span>
+              <span className=" px-4 py-2  font-bold [&[align=center]]:text-center [&[align=right]]:text-right text-center">
+                Book Count
+              </span>
+            </div>
+            {result.data.allAuthors.map((author, i) => {
+              return (
+                <div
+                  className="grid   grid-cols-3 gap-2  border-b py-2"
+                  key={i}
+                >
+                  <span>{author.name}</span>
+                  <span className=" text-center">{author.born}</span>
+                  <span className=" text-center">{author.bookCount}</span>
+                </div>
+              );
+            })}
           </div>
-          {result.data.allAuthors.map((author, i) => {
-            return (
-              <div className="grid   grid-cols-3 gap-2  border-b py-2" key={i}>
-                <span>{author.name}</span>
-                <span className=" text-center">{author.born}</span>
-                <span className=" text-center">{author.bookCount}</span>
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex flex-col gap-4">
-          <h2 className="text-2xl font-bold">Edit Author Birth Year</h2>
-          <div className="p-4 border border-black">
-            <form className="flex flex-col gap-2">
-              <span className="flex gap-2">
-                <label className="min-w-[80px]" htmlFor="author">
-                  Author
-                </label>
-                <Select
-                  ref={select}
-                  className="w-full"
-                  onChange={handleChange}
-                  options={selectOptions}
-                />
-              </span>
-              <span className="flex gap-2">
-                <label className="min-w-[80px]" htmlFor="bornYear">
-                  Birth Year
-                </label>
-                <input
-                  className="border border-black px-1"
-                  type="text"
-                  name="bornYear"
-                  value={bornYear}
-                  onChange={(e) => setBornYear(e.target.value)}
-                />
-              </span>
-              <button
-                onClick={handleSubmit}
-                className=" mt-2 middle none center rounded-sm bg-amber-500 py-1 px-2 font-sans text-xs font-bold uppercase text-white shadow-md shadow-amber-500/20 transition-all hover:shadow-lg hover:shadow-amber-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+        </CardContent>
+      </Card>
+      <Card className="flex flex-col gap-4">
+        <CardHeader className="text-2xl font-bold">
+          Edit Author Birth Year
+        </CardHeader>
+        <CardContent className="flex h-full gap-6">
+          <form className="flex flex-col h-full gap-2 w-full">
+            <span className="flex gap-2">
+              <Label
+                className="min-w-[80px] flex items-center"
+                htmlFor="author"
               >
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+                Author
+              </Label>
+              <Select
+                ref={select}
+                className="w-full"
+                onChange={handleChange}
+                options={selectOptions}
+              />
+            </span>
+            <span className="flex gap-2">
+              <Label
+                className="min-w-[80px] flex items-center"
+                htmlFor="bornYear"
+              >
+                Birth Year
+              </Label>
+              <Input
+                className="border border-black px-1"
+                type="text"
+                name="bornYear"
+                value={bornYear}
+                onChange={(e) => setBornYear(e.target.value)}
+              />
+            </span>
+            <Button className="self-end" onClick={handleSubmit}>
+              Submit
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
