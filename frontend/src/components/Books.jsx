@@ -8,6 +8,14 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 export const Books = () => {
   const [formdata, setFormdata] = useState({
     title: "",
@@ -84,9 +92,123 @@ export const Books = () => {
   return (
     <div className="flex flex-col gap-4 px-6">
       <Card className="text-left flex flex-col  px-6">
-        <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
-          Books
-        </CardHeader>
+        <div className="flex justify-between">
+          <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
+            Books
+          </CardHeader>
+          <Dialog>
+            <DialogTrigger className="mr-8">
+              <Button variant="outline">Add New Book</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <div className="p-3">
+                <Card className="flex flex-col gap-4">
+                  <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
+                    Add New Book
+                  </CardHeader>
+
+                  <CardContent className="flex flex-col">
+                    <form className="flex flex-col gap-2">
+                      <span className="flex">
+                        <Label
+                          className="min-w-[80px] flex items-center"
+                          htmlFor="title"
+                        >
+                          Title:
+                        </Label>
+                        <Input
+                          className="  px-1 w-full"
+                          type="text"
+                          name="title"
+                          value={formdata.title}
+                          onChange={(e) =>
+                            setFormdata({ ...formdata, title: e.target.value })
+                          }
+                        />
+                      </span>
+                      <span className="flex">
+                        <Label
+                          className="min-w-[80px] flex items-center"
+                          htmlFor="author"
+                        >
+                          Author
+                        </Label>
+                        <Select
+                          ref={select}
+                          className="w-full "
+                          onChange={handleChange}
+                          options={selectOptions}
+                        />
+                      </span>
+                      <span className="flex">
+                        <Label
+                          className="min-w-[80px] flex items-center"
+                          htmlFor="published"
+                        >
+                          Published:
+                        </Label>
+                        <Input
+                          className="  px-1 w-full"
+                          type="text"
+                          name="published"
+                          value={formdata.published}
+                          onChange={(e) =>
+                            setFormdata({
+                              ...formdata,
+                              published: e.target.value,
+                            })
+                          }
+                        />
+                      </span>
+                      <span className="flex h-[40px] items-center gap-1">
+                        <Label
+                          className="min-w-[80px] flex items-center "
+                          htmlFor="genres"
+                        >
+                          Genres:{" "}
+                        </Label>
+                        <div className="flex gap-1">
+                          {formdata.genres.map((genre, i) => {
+                            return <span key={i}>"{genre}"</span>;
+                          })}
+                        </div>
+                      </span>
+                    </form>
+                    <div className="flex">
+                      <Label
+                        className="min-w-[80px] flex items-center"
+                        htmlFor="genres"
+                      >
+                        Genre:{" "}
+                      </Label>
+                      <Input
+                        className="  px-1"
+                        type="text"
+                        name="newGenre"
+                        value={newGenre}
+                        onChange={(e) => setNewGenre(e.target.value)}
+                      />
+                      <Button
+                        variant="outline mt-4"
+                        onClick={() =>
+                          setFormdata({
+                            ...formdata,
+                            genres: [...formdata.genres, newGenre],
+                          })
+                        }
+                      >
+                        Add Genre
+                      </Button>
+                    </div>
+                    <Button className="mt-4" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         <CardContent className="flex">
           <div className="">
             <div className="grid grid-cols-4 gap-3 font-semibold -b-2  py-2">
@@ -126,101 +248,6 @@ export const Books = () => {
               );
             })}
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="flex flex-col gap-4">
-        <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
-          Add New Book
-        </CardHeader>
-
-        <CardContent className="flex flex-col">
-          <form className="flex flex-col gap-2">
-            <span className="flex">
-              <Label className="min-w-[80px] flex items-center" htmlFor="title">
-                Title:
-              </Label>
-              <Input
-                className="  px-1 w-full"
-                type="text"
-                name="title"
-                value={formdata.title}
-                onChange={(e) =>
-                  setFormdata({ ...formdata, title: e.target.value })
-                }
-              />
-            </span>
-            <span className="flex">
-              <Label
-                className="min-w-[80px] flex items-center"
-                htmlFor="author"
-              >
-                Author
-              </Label>
-              <Select
-                ref={select}
-                className="w-full "
-                onChange={handleChange}
-                options={selectOptions}
-              />
-            </span>
-            <span className="flex">
-              <Label
-                className="min-w-[80px] flex items-center"
-                htmlFor="published"
-              >
-                Published:
-              </Label>
-              <Input
-                className="  px-1 w-full"
-                type="text"
-                name="published"
-                value={formdata.published}
-                onChange={(e) =>
-                  setFormdata({ ...formdata, published: e.target.value })
-                }
-              />
-            </span>
-            <span className="flex h-[40px] items-center gap-1">
-              <Label
-                className="min-w-[80px] flex items-center "
-                htmlFor="genres"
-              >
-                Genres:{" "}
-              </Label>
-              <div className="flex gap-1">
-                {formdata.genres.map((genre, i) => {
-                  return <span key={i}>"{genre}"</span>;
-                })}
-              </div>
-            </span>
-          </form>
-          <div className="flex">
-            <Label className="min-w-[80px] flex items-center" htmlFor="genres">
-              Genre:{" "}
-            </Label>
-            <Input
-              className="  px-1"
-              type="text"
-              name="newGenre"
-              value={newGenre}
-              onChange={(e) => setNewGenre(e.target.value)}
-            />
-            <Button
-              variant="outline mt-4"
-              onClick={() =>
-                setFormdata({
-                  ...formdata,
-                  genres: [...formdata.genres, newGenre],
-                })
-              }
-            >
-              Add Genre
-            </Button>
-          </div>
-          <Button className="mt-4" onClick={handleSubmit}>
-            Submit
-          </Button>
         </CardContent>
         <CardContent>
           <h2 className="text-xl font-bold">Genre Filters</h2>

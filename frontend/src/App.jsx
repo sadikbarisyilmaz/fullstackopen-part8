@@ -60,11 +60,6 @@ function App() {
             </Link>
           </li>
           <li>
-            <Link to="/">
-              <Button variant="ghost">Books</Button>
-            </Link>
-          </li>
-          <li>
             <Link to="/authors">
               <Button variant="ghost">Authors</Button>
             </Link>
