@@ -7,15 +7,15 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Loader } from "./Loader";
 export const Books = () => {
   const [formdata, setFormdata] = useState({
     title: "",
     published: "",
     genres: [],
   });
-
+  const [open, setOpen] = useState(false);
   const [selectedAuthor, setSelectedAuthor] = useState(null);
   const [newGenre, setNewGenre] = useState("");
   const [genre, setGenre] = useState("");
@@ -43,11 +43,7 @@ export const Books = () => {
   };
 
   if (result.loading) {
-    return (
-      <div className="flex w-full justify-center items-center mt-10">
-        <Loader2 className="animate-spin" />
-      </div>
-    );
+    return <Loader />;
   }
 
   const selectOptions = uniqueAuthors(result.data.allBooks);
@@ -68,6 +64,7 @@ export const Books = () => {
       published: "",
       genres: [],
     });
+    setOpen(false);
   };
 
   const extractGenres = (booksArr) => {
@@ -89,7 +86,7 @@ export const Books = () => {
           <CardHeader className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-4xl">
             Books
           </CardHeader>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger className="mr-8">
               <Button variant="outline">Add New Book</Button>
             </DialogTrigger>

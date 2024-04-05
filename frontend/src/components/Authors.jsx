@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { Loader } from "./Loader";
 
 export const Authors = () => {
   const [selectedAuthor, setSelectedAuthor] = useState(null);
@@ -17,7 +18,7 @@ export const Authors = () => {
   });
 
   if (result.loading) {
-    return <div>loading...</div>;
+    return <Loader />;
   }
 
   const selectOptions = result.data.allAuthors.map((author) => {

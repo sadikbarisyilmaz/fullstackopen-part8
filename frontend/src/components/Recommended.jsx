@@ -1,12 +1,13 @@
 import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Loader } from "./Loader";
 
 export const Recommended = ({ genre }) => {
   const result = useQuery(ALL_BOOKS, { variables: { genre } });
 
   if (result.loading) {
-    return <div>loading...</div>;
+    return <Loader />;
   }
 
   return (

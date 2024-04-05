@@ -9,6 +9,7 @@ import { useApolloClient, useQuery, useSubscription } from "@apollo/client";
 import { Recommended } from "./components/Recommended";
 import { BOOK_ADDED, ALL_BOOKS, ME } from "./queries";
 import { Button } from "./components/ui/button";
+import { Loader } from "./components/Loader";
 
 function App() {
   const [token, setToken] = useState(null);
@@ -47,12 +48,12 @@ function App() {
   }
 
   if (!result.data) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
     <div className="h-full flex flex-col gap-4 ">
-      <nav className="py-2 w-full flex justify-around shadow-md">
+      <nav className="py-2 w-full flex justify-around shadow-md bg-primary text-white">
         <ul className="flex ">
           <li>
             <Link to="/">
@@ -71,7 +72,7 @@ function App() {
             </Link>
           </li>
         </ul>
-        <Button variant="outline" onClick={logout}>
+        <Button variant="ghost" onClick={logout}>
           Logout
         </Button>
       </nav>
